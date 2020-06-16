@@ -36,6 +36,7 @@ from synapse.api.errors import (
     UserDeactivatedError,
 )
 from synapse.api.ratelimiting import Ratelimiter
+from synapse.http.servlet import assert_params_in_dict
 from synapse.handlers.ui_auth import INTERACTIVE_AUTH_CHECKERS
 from synapse.handlers.ui_auth.checkers import UserInteractiveAuthChecker
 from synapse.http.server import finish_request
@@ -78,12 +79,7 @@ def client_dict_convert_legacy_fields_to_identifier(
 
     # We've converted valid, legacy login submissions to an identifier. If the
     # dict still doesn't have an identifier, it's invalid
-    if "identifier" not in submission:
-        raise SynapseError(
-            400,
-            "Missing 'identifier' parameter in login submission",
-            errcode=Codes.MISSING_PARAM,
-        )
+    assert_params_in_dict(submission, required=["identifier"])
 
     # Ensure the identifier has a type
     if "type" not in submission["identifier"]:
