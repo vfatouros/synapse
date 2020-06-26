@@ -32,14 +32,14 @@ def get_badge_count(store, user_id):
         if room_id in my_receipts_by_room:
             last_unread_event_id = my_receipts_by_room[room_id]
 
-            notifs = yield (
-                store.get_unread_event_push_actions_by_room_for_user(
-                    room_id, user_id, last_unread_event_id
+            unread_count = yield defer.ensureDeferred(
+                store.get_unread_message_count_for_user(
+                    user_id, room_id, last_unread_event_id
                 )
             )
             # return one badge count per conversation, as count per
             # message is so noisy as to be almost useless
-            badge += 1 if notifs["notify_count"] else 0
+            badge += 1 if unread_count else 0
     return badge
 
 
